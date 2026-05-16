@@ -1,0 +1,50 @@
+---
+description: Full-page QA — responsive typography, spacing, and parity across all target breakpoints.
+alwaysApply: true
+---
+
+# Responsive QA (full page)
+
+When reviewing or comparing any webpage to Figma (or design intent), verify the **entire page** — not only desktop.
+
+## Viewports to check (use Figma mobile frame when provided; otherwise these widths)
+
+Test at minimum: **375**, **425**, **768**, **1024**, **1440**, **1920** (height = normal browser chrome; 100% zoom unless spec says otherwise). The extension’s Phase 2 checkbox **All responsive widths** runs one compare pass at each of these inner widths (same order). **1512** and **2560** (and other sizes) can be checked manually. One Figma frame export is downloaded per compare and reused for every pass; typography checks are **stricter when the tab inner width matches the detected Figma export width** (e.g. comp at **1920**), and allow **modestly smaller** live font sizes at **narrower desktop** widths (e.g. **1440**) vs those same Figma tokens.
+
+## Typography (all resolutions)
+
+- **Hierarchy must hold**: H1 → subheading → body / sub-copy relationships stay clear; nothing should read as “wrong level” at any width.
+- **Mobile (375 / 425)**: Body and UI text must **not** look **comically large** vs desktop; headings may scale down but should still **feel proportional** to the design system — not one giant headline with tiny body unless that’s in Figma.
+- **Strategy**: Same **semantic roles** (page title, section title, card title, supporting line, fine print) across breakpoints; if Figma defines **separate mobile type styles**, match those — do not assume desktop font sizes on mobile.
+- **Line length / wrapping**: No overflow clipping; no unreadable hyphenation storms; headings may wrap but should stay balanced.
+
+### UI + type scale — **all** viewports (training)
+
+At **every** width in your pass (**375, 425, 768, 1024, 1440, 1920**, plus any extra widths like **1512 / 2560** you verify manually, and **~325px** if you test smallest devices), verify:
+
+- **Page-wide UI** is **proper** for **that** breakpoint (not only on mobile).
+- **Title, subtitle, and sub-copy** keep correct **hierarchy** and **breakpoint-appropriate** sizes — not the wrong scale for the width (e.g. desktop px on narrow viewports, or mobile-sized hero copy left unchanged at **1440** when the desktop comp differs).
+- Text does **not** read **too large** for the canvas: on **narrow** viewports that usually means no “desktop type on a phone”; on **wider** viewports it means type stays proportional to layout and max-width, not arbitrarily huge.
+
+See `multi-viewport-extension-qa.mdc` for the same training in extension context. **Worst** overscale bugs often appear first at **~325 / 375 / 425 / 768**, but the rule applies **globally**.
+
+## Layout & polish (all resolutions)
+
+- **No disturbed elements**: nothing overlapping, cut off, or overlapping the wrong layer; sticky/fixed nav must not hide focus content awkwardly unless designed.
+- **Spacing**: Section **top/bottom padding** and **gaps between blocks** should stay coherent; no random huge holes or crushed stacks at intermediate widths (**768 / 1024**).
+- **Grids & cards**: Columns collapse per design (e.g. 4 → 2 → 1); images and icons stay **sharp** and aligned; carousels/arrows usable on touch and desktop.
+- **Wide screens (1920+)**: Content should not **stretch** into ugly long lines if Figma uses a **max-width** container — centering and side margins should match intent; no floating broken floats. Ultra-wide (e.g. **2560**) is often manual QA.
+
+## Functional (same as narrow QA rules)
+
+- Links, tabs, accordions, carousels, forms (no unsafe submit); `mailto:` / `tel:` where applicable; hover/focus where relevant (keyboard on desktop).
+
+## Evidence
+
+- Screenshots are **cropped to the section** and **highlight** the defect; descriptions stay **short and casual**.
+- **Figma vs Page Compare extension:** with **All responsive widths**, the text report opens with **one line listing the inner widths** used; the issue table has **no viewport column**. Identical **Content / Typography / Functional** rows are **deduplicated** across widths; **Visual** pixel rows may still repeat when the mismatch differs by breakpoint. See `multi-viewport-extension-qa.mdc` in this folder for extension-specific training.
+
+## Do not
+
+- Assume a single desktop frame is enough when Figma or scope includes mobile/tablet.
+- Log purely cosmetic 1–3px gaps if project tolerance says ignore — follow project tolerance.

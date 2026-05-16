@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Figma vs Page Compare",
+  "version": "2.12.17",
+  "description": "Overlay a Figma export on the live page to compare layout, spacing, and visuals.",
+  "permissions": ["storage", "activeTab", "scripting", "tabs", "downloads", "windows"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Figma vs Page Compare"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "commands": {
+    "toggle-overlay": {
+      "suggested_key": {
+        "default": "Alt+Shift+F"
+      },
+      "description": "Toggle comparison overlay"
+    },
+    "nudge-up": {
+      "description": "Nudge overlay up"
+    },
+    "nudge-down": {
+      "description": "Nudge overlay down"
+    },
+    "nudge-left": {
+      "description": "Nudge overlay left"
+    },
+    "nudge-right": {
+      "description": "Nudge overlay right"
+    }
+  }
+}

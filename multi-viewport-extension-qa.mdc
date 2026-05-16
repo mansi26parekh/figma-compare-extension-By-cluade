@@ -1,0 +1,48 @@
+---
+description: How to run and interpret the Figma vs Page Compare extension across multiple viewports (Phase 2) and the generated report.
+alwaysApply: false
+---
+
+# Multi-viewport checking (extension training)
+
+Use this when running **Figma vs Page Compare** with **Phase 2 → “All responsive widths”** (or any multi-width compare).
+
+## What the extension does
+
+1. **Phase 1** saves the Figma frame id, typography cache, and optional export width — not a stored PNG for compare; each run downloads a fresh frame image from the Figma API.
+2. **Phase 2** resizes the **browser window** so the tab’s **inner width** matches each target width (e.g. 375 → 2560), waits, then captures a **full-page stitch** and runs QA at that width.
+3. After the last width, the window is **restored** to its previous size.
+
+## How to think about findings
+
+- **Visual (pixel)** compares the stitched live page to the Figma export for that run. Layout shifts with width, so **pixel rows can legitimately differ per breakpoint** — the report may list several Visual rows for the same page when they are not the same finding.
+- **Content**, **Typography vs Figma**, and **Functional** checks are mostly **width-invariant** (same copy, same DOM rules). Repeating the same sentence at every width is noise, so the extension **collapses identical rows to one** in the report and CSV (first pass wins for evidence links).
+- **Per-issue screenshots** are crops from **one** pass’s capture (the first pass where that row appeared). For typography tied to layout, re-spot-check at the width you care about if needed.
+
+## Manual QA habit
+
+1. Run **all rule widths** at least once per milestone (or use the extension checkbox).
+2. For anything suspicious at one width, **resize the browser** (or DevTools device mode) and confirm whether it is a true breakpoint bug or Figma scope (e.g. only desktop framed).
+3. Prefer **Figma’s dedicated mobile frames** when the team supplies them; the extension still uses one exported node per run — align the **saved frame** with what you are judging.
+
+## Report shape (no viewport column)
+
+The issue table is **ID, section, description, screenshot link, status**. When multiple widths were used, the text report starts with a **one-line title** listing those widths, then the issue list — viewport is not a separate column.
+
+---
+
+## Product training: UI + type hierarchy at **every** viewport
+
+This applies to **all** widths you run — extension defaults: **375, 425, 768, 1024, 1440, 1920** (add **1512**, **2560**, ~**325px**, etc. manually if needed). **Do not** limit the checklist below to mobile only; repeat the same **intent** at each breakpoint, adjusted to what that width is supposed to look like in Figma. The extension compares each pass to **one** Figma export per run; at the **native** frame width (e.g. **1920**) type should track Figma closely, while **1440** may show **slightly smaller** sizes than the comp without failing automation.
+
+### What to verify (each viewport)
+
+1. **UI across the full page** — Layout and components should look **proper** at **that** width (readable, coherent spacing, nothing critically broken or blocking content).
+
+2. **Title, subtitle, sub-copy** — Keep clear **hierarchy** (title > subtitle > sub-copy). Sizes should **match the design for that breakpoint**, not a **wrong** scale (e.g. mobile-looking copy at **1440**, or **desktop-sized** title/body on **375**). **Same pixel sizes as a wide desktop layout** on a narrow pass is a **red flag**; at wide widths, type should follow the **desktop / large** system, not stay stuck on mobile sizes unless that is intentional.
+
+3. **Text not inappropriately large** — At **narrow** widths this usually means “not desktop type on a small screen.” At **tablet and up**, it means body and sub-copy stay **appropriate to the column width** and design — not bloated or out of scale vs the frame. Judge each width against **Figma (or spec) for that range**, not only against the previous width.
+
+### Note
+
+The **worst** “everything looks desktop-sized” failures show up on **~325 / 375 / 425 / 768**, but the rule is **global**: every viewport gets a proper UI + sensible type scale for **that** viewport.

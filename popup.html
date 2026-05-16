@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Figma vs Page</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="panel">
+      <section id="viewSetup" class="view" aria-label="Setup">
+        <div class="toolbar phase-nav">
+          <button type="button" class="btn link" disabled>← Prev</button>
+          <span class="phase-label">Phase 1 / 3</span>
+          <button type="button" id="toPhase2FromSetup" class="btn link">Next →</button>
+        </div>
+        <h1 class="title">Figma vs Page</h1>
+
+        <label class="field">
+          <span class="label label-sentence">Figma frame URL:</span>
+          <input type="url" id="wizardFigmaUrl" placeholder="https://www.figma.com/design/…?node-id=…" autocomplete="off" />
+        </label>
+
+        <label class="field">
+          <span class="label label-sentence">Figma token</span>
+          <input
+            type="text"
+            class="figma-token-field"
+            id="wizardFigmaToken"
+            spellcheck="false"
+            autocapitalize="off"
+            autocomplete="off"
+          />
+        </label>
+
+        <p class="hint tight" id="figmaSnapshotStatus">
+          Enter Figma URL + token, then Analyze Figma page. The extension does not keep a Figma preview image in storage — compare downloads the frame from the API each run.
+        </p>
+
+        <!-- Upload: code kept; hidden via `.hidden-upload-feature` in popup.css — enable later if needed. -->
+        <div class="field hidden-upload-feature" aria-hidden="true">
+          <span class="label">Upload design image (fallback)</span>
+          <input type="file" id="figmaSnapshotFile" accept="image/png,image/jpeg,image/webp" />
+        </div>
+
+        <label class="field">
+          <span class="label">Webpage URL</span>
+          <input type="url" id="wizardPageUrl" placeholder="https://..." autocomplete="off" />
+        </label>
+
+        <div class="actions">
+          <button type="button" id="saveSetup" class="btn primary full" disabled>Analyze Figma page</button>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="refreshFigmaDesign" class="btn secondary full" disabled>Refresh Figma cache</button>
+        </div>
+
+        <p class="status" id="setupStatus" role="status"></p>
+      </section>
+
+      <section id="viewTools" class="view hidden" aria-label="Compare">
+        <div class="toolbar phase-nav">
+          <button type="button" id="backToSetup" class="btn link">← Edit setup</button>
+          <span class="phase-label">Phase 2 / 3</span>
+          <button type="button" id="toPhase3FromTools" class="btn link">Next → Report</button>
+        </div>
+        <h1 class="title">Compare</h1>
+
+        <div class="compare-phase2-stack">
+          <div class="actions">
+            <button type="button" id="openPageBtn" class="btn secondary">Open webpage</button>
+          </div>
+          <div class="actions">
+            <button type="button" id="runCompare" class="btn primary full">Run compare</button>
+          </div>
+          <p class="status" id="compareRunStatus" role="status"></p>
+          <div id="qaProgressOverlay" class="qa-progress-overlay hidden" aria-hidden="true">
+            <div class="qa-progress-card">
+              <div class="qa-progress-spinner" aria-hidden="true">
+                <svg viewBox="0 0 44 44" class="qa-spinner-svg">
+                  <circle class="qa-spinner-track" cx="22" cy="22" r="18" fill="none" />
+                  <circle class="qa-spinner-arc" cx="22" cy="22" r="18" fill="none" />
+                </svg>
+              </div>
+              <p id="qaProgressLabel" class="qa-progress-label">Comparing…</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="viewReport" class="view hidden" aria-label="Report">
+        <div class="toolbar phase-nav">
+          <button type="button" id="backToTools" class="btn link">← Prev</button>
+          <span class="phase-label">Phase 3 / 3</span>
+          <button type="button" class="btn link" disabled>Next →</button>
+        </div>
+        <h1 class="title">Report</h1>
+        <div class="report-phase-stack">
+          <div id="failPreviewSection" class="fail-preview-section hidden" aria-label="Issues">
+            <div class="fail-preview-wrap">
+              <table class="fail-preview-table">
+                <colgroup>
+                  <col class="fail-preview-col-id" />
+                  <col class="fail-preview-col-type" />
+                  <col class="fail-preview-col-desc" />
+                  <col class="fail-preview-col-shot" />
+                  <col class="fail-preview-col-status" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Issue description</th>
+                    <th scope="col">Screenshot</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="failPreviewTbody"></tbody>
+              </table>
+            </div>
+            <div class="actions fail-preview-actions">
+              <button type="button" id="downloadIssuesCsv" class="btn secondary" disabled>Download CSV</button>
+            </div>
+          </div>
+
+          <div
+            id="qaDoneModal"
+            class="qa-done-modal hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="qaDoneTitle"
+            aria-hidden="true"
+          >
+            <div class="qa-done-card">
+              <p id="qaDoneTitle" class="qa-done-title">Verification complete</p>
+              <p class="qa-done-msg">
+                I've done verification from my side, could you please re-verify again?
+              </p>
+              <p class="qa-done-greeting">
+                Happy testing — and if you need help with anything, your AI agent is right here for you.
+              </p>
+              <button type="button" id="qaDoneDismiss" class="btn primary qa-done-btn">OK</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>
